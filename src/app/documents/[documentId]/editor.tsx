@@ -1,41 +1,56 @@
 "use client";
+
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { TaskItem } from "@tiptap/extension-task-item";
-import { TaskList } from "@tiptap/extension-task-list";
-import { useLiveblocksExtension, FloatingToolbar } from "@liveblocks/react-tiptap";
-//import { Image } from "@tiptap/extension-image";
-import { TableKit } from "@tiptap/extension-table";
-import { ImageResize } from "tiptap-extension-resize-image";
+
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
+
+import Image from "@tiptap/extension-image";
+import ImageResize from "tiptap-extension-resize-image";
+
+import Underline from "@tiptap/extension-underline";
+import FontFamily from "@tiptap/extension-font-family";
+import TextStyle from "@tiptap/extension-text-style";
+
 import { Color } from "@tiptap/extension-color";
-import { Highlight } from "@tiptap/extension-highlight";
-import { FontFamily, TextStyle } from "@tiptap/extension-text-style";
+import Highlight from "@tiptap/extension-highlight";
+
+import TextAlign from "@tiptap/extension-text-align";
+
 import Link from "@tiptap/extension-link";
+
+import { useLiveblocksExtension } from "@liveblocks/react-tiptap";
+import { useStorage } from "@liveblocks/react";
+
 import { useEditorStore } from "@/store/use-editor-store";
-import { TextAlign } from "@tiptap/extension-text-align";
-
-import { LineHeightExtension } from "@/extensions/line-height";
 import { FontSizeExtension } from "@/extensions/font-size";
-import { Ruler } from "@/app/documents/[documentId]/ruler";
-import {Threads} from "@/app/documents/[documentId]/threads";
-import {useStorage} from "@liveblocks/react/suspense"
+import { LineHeightExtension } from "@/extensions/line-height";
+import { Ruler } from "./ruler";
+import { Threads } from "./threads";
 
-
-interface EditorProps{
+interface EditorProps {
   initialContent?: string | undefined;
-
 }
 
-export const Editor = ({initialContent}:EditorProps) => {
-  const leftMargin=useStorage((root)=>root.leftMargin)
-  const rightMargin = useStorage((root)=>root.rightMargin)
+export const Editor = ({ initialContent }: EditorProps) => {
+  const leftMargin = useStorage((root) => root.leftMargin) ?? 56;
+  const rightMargin = useStorage((root) => root.rightMargin) ?? 56;
+
   const liveblocks = useLiveblocksExtension({
     initialContent,
-    offlineSupport_experimental:true
-  })
+    offlineSupport_experimental: true,
+  });
   const { setEditor } = useEditorStore();
+
   const editor = useEditor({
-    onCreate(props) {
+    immediatelyRender: false,
+    onCreate({ editor }) {
       setEditor(editor);
     },
     onDestroy() {
@@ -50,6 +65,9 @@ export const Editor = ({initialContent}:EditorProps) => {
     onTransaction({ editor }) {
       setEditor(editor);
     },
+    onFocus({ editor }) {
+      setEditor(editor);
+    },
     onBlur({ editor }) {
       setEditor(editor);
     },
@@ -58,54 +76,54 @@ export const Editor = ({initialContent}:EditorProps) => {
     },
     editorProps: {
       attributes: {
-        style: `padding-left:${leftMargin ?? 56}px; padding-right:${rightMargin ?? 56}px;`,
+        style: `padding-left: ${leftMargin}px; padding-right: ${rightMargin}px;`,
         class:
-          " border focus:outline-none print:border-0 bg-white border-[#C7C7C7] flex flex-col min-h-[1054px] w-[816px] pt-10 pr-14 pb-10 cursor-text",
+            "focus:outline-none print:boder-0 border bg-white border-editor-border flex flex-col min-h-[1054px] w-[816px] pt-10 pr-14 pb-10 cursor-text",
       },
     },
     extensions: [
       liveblocks,
-      StarterKit,
+      StarterKit.configure({
+        history: false,
+      }),
+      Table,
+      TableCell,
+      TableHeader,
+      TableRow,
+      TaskList,
+      Image,
+      ImageResize,
+      Underline,
+      FontFamily,
+      TextStyle,
+      Color,
       LineHeightExtension.configure({
         types: ["heading", "paragraph"],
+        defaultLineHeight: "1.5",
       }),
       FontSizeExtension,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
       Link.configure({
         openOnClick: false,
         autolink: true,
         defaultProtocol: "https",
       }),
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
+      Highlight.configure({
+        multicolor: true,
       }),
-      Color,
-      Highlight.configure({ multicolor: true }),
-      TextStyle,
-      FontFamily,
-      ImageResize.configure({
-        inline: false,
-        HTMLAttributes: {
-          class: "resizable-image",
-        },
-        allowBase64: true,
-      }), // Image,
-      TaskList,
-      TaskItem.configure({
-        nested: true,
-      }),
-      TableKit,
+      TaskItem.configure({ nested: true }),
     ],
-
-    // Don't render immediately on the server to avoid SSR issues
-    immediatelyRender: false,
   });
+
   return (
-    <div className="size-full overflow-x-auto bg-[#F9FBFD] px-4 print:p-0 print:bg-white print:overflow-visible">
-      <Ruler />
-      <div className="min-w-max flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0">
-        <EditorContent editor={editor} />
-        <Threads editor={editor}/>
+      <div className="size-full overflow-x-auto bg-editor-bg px-4 print:p-0 print:bg-white print:overflow-visible">
+        <Ruler />
+        <div className="min-w-max flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0">
+          <EditorContent editor={editor} />
+          <Threads editor={editor} />
+        </div>
       </div>
-    </div>
   );
 };

@@ -230,14 +230,7 @@ router.push(`/documents/${id}`)
                           <ItalicIcon className="size-4 mr-2"/>
                           Italic
                         </MenubarItem>
-                        <MenubarItem
-                            onClick={() =>
-                                editor?.chain().focus().toggleUnderline().run()
-                            }
-                        >
-                          <UnderlineIcon className="size-4 mr-2"/>
-                          Underline
-                        </MenubarItem>
+
                       </MenubarSubContent>
                     </MenubarSub>
                     <MenubarItem

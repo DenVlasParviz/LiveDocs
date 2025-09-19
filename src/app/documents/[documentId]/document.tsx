@@ -1,6 +1,6 @@
 "use client"
 import { Editor } from "./editor";
-import Toolbar from "./toolbar";
+import {Toolbar} from "./toolbar";
 import { Navbar } from "@/app/documents/[documentId]/navbar";
 import {Room} from "@/app/documents/[documentId]/room";
 import {Avatars} from "@/app/documents/[documentId]/avatars";
