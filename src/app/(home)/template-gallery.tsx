@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useState } from "react";
+import { templates } from "@/constants/templates";
 
 export const TemplateGallery = () => {
   const router = useRouter();
@@ -25,9 +26,6 @@ export const TemplateGallery = () => {
         setIsCreating(false);
       });
   };
-  const templates = [
-    { id: "blank", label: "Blank documents", imageUrl: "/globe.svg" },
-  ];
   return (
     <div className="bg-[#F1F3F4]">
       <div className="max-w-screen-xl mx-auto px-16 py-6 flex flex-col gap-y-4">
@@ -48,7 +46,7 @@ export const TemplateGallery = () => {
                   <button
                     disabled={isCreating}
                     onClick={() => {
-                      onTemplateClick(template.label, "");
+                      onTemplateClick(template.label, template.initialContent);
                     }}
                     style={{
                       backgroundImage: `url(${template.imageUrl})`,
