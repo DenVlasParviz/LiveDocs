@@ -573,7 +573,7 @@ const Toolbar = () => {
       {
         label: "Comment",
         icon: MessageSquarePlusIcon,
-        onClick: () => console.log("TODO: Comment"),
+        onClick: () => editor?.chain().focus().addP().run(),
         isActive: false,
       },
       {

@@ -13,13 +13,7 @@ export const Navbar = () => {
         <h3 className="text-xl">Docs</h3>
       </div>
       <SearchInput />
-      <div className="flex gap-3 items-center pl-6">
-        <OrganizationSwitcher
-          afterCreateOrganizationUrl="/"
-          afterLeaveOrganizationUrl="/"
-        />
-        <UserButton />
-      </div>
+
     </nav>
   );
 };

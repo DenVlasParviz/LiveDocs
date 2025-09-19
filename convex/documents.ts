@@ -14,6 +14,8 @@ export const get = query({
     const organizationId = (user.organization_id ?? undefined) as
       | string
       | undefined;
+    console.log(user)
+
     if (search && organizationId)
       return ctx.db
         .query("documents")
@@ -96,12 +98,20 @@ export const updateById = mutation({
     if (!documents) {
       throw new ConvexError("Document not found");
     }
+
     const isOwner = documents.ownerId === user.subject;
     const organizationId = (user.organization_id ?? undefined) as
         | string
         | undefined;
-    const isOrganizationMember = documents.organizationId === organizationId;
+    const isOrganizationMember = !!(documents.organizationId && documents.organizationId === organizationId);
     if (!isOwner &&  !isOrganizationMember) throw new ConvexError("Unathorized");
     return await ctx.db.patch(args.id, { title: args.title });
   },
 });
+export const getById=query({
+  args:{id:v.id("documents") },
+  handler:async(ctx,{id})=>{
+return  await ctx.db.get(id)
+
+  }
+})
